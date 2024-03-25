@@ -229,7 +229,7 @@ def show_page3():
 
 
 def show_page4():
-    st.markdown("# Página 4 🎉")
+
     # st.set_page_config(layout="wide")
 
     # Título principal
