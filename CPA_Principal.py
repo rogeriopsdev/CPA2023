@@ -2,11 +2,13 @@ import streamlit as st
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+
+
 # Função para mostrar a Página 1
 def show_page1():
-    #st.markdown("# Página 1 🎈")
+    # st.markdown("# Página 1 🎈")
     # Configurando layout
-    #st.set_page_config(layout="wide")
+    # st.set_page_config(layout="wide")
 
     # Título principal
     st.markdown("# Docentes Araguatins 2023🎈",
@@ -76,11 +78,12 @@ def show_page1():
     else:
         st.sidebar.write("Por favor, selecione uma ou mais colunas.")
 
+
 # Função para mostrar a Página 2
 def show_page2():
-   # st.markdown("# Página 2 ❄️")
+    # st.markdown("# Página 2 ❄️")
     # Configurando layout
-    #st.set_page_config(layout="wide")
+    # st.set_page_config(layout="wide")
 
     # Título principal
     st.markdown("# Discentes Araguatins 🎈",
@@ -153,7 +156,6 @@ def show_page2():
 
 # Função para mostrar a Página 3
 def show_page3():
-    #st.markdown("# Página 3 🎉")
     # Configurando layout
     #st.set_page_config(layout="wide")
 
@@ -228,10 +230,10 @@ def show_page3():
 
 def show_page4():
     st.markdown("# Página 4 🎉")
-    #st.set_page_config(layout="wide")
+    # st.set_page_config(layout="wide")
 
     # Título principal
-    st.markdown("# Técnicos Administrativos em Educação - Araguatins 🎈",
+    st.markdown("# Sociedade Civil - Araguatins 🎈",
                 unsafe_allow_html=True)  # Usando unsafe_allow_html para permitir que o título tenha um tamanho maior
 
     # Carregando os dados
@@ -306,14 +308,15 @@ st.set_page_config(layout="wide")
 st.sidebar.markdown("# Menu de Navegação 📚", unsafe_allow_html=True)
 
 # Menu para selecionar a página
-selected_page = st.sidebar.radio("Selecione a página:", ["Docentes", "Discentes", "Técnco Administrativos em Educação", "Sociedade Civil Organizada"])
+selected_page = st.sidebar.radio("Selecione a página:", ["Docentes", "Discentes", "Técnico Administrativos em Educação",
+                                                         "Sociedade Civil Organizada"])
 
 # Mostrar a página correspondente à opção selecionada
 if selected_page == "Docentes":
     show_page1()
 elif selected_page == "Discentes":
     show_page2()
-elif selected_page == "Técnico Administrativo em Educação":
+elif selected_page == "Técnico Administrativos em Educação":
     show_page3()
 elif selected_page == "Sociedade Civil Organizada":
     show_page4()

@@ -6,7 +6,7 @@ import plotly.express as px
 st.set_page_config(layout="wide")
 
 # Título principal
-st.markdown("# Técnicos Administrativos em Educação - Araguatins 🎈", unsafe_allow_html=True)  # Usando unsafe_allow_html para permitir que o título tenha um tamanho maior
+st.markdown("# Sociedade Civil Organizada - Araguatins 🎈", unsafe_allow_html=True)  # Usando unsafe_allow_html para permitir que o título tenha um tamanho maior
 
 # Carregando os dados
 df = pd.read_csv('dados/soc_civil/Comunidade_araguatins.csv', sep=',')
