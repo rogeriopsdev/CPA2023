@@ -3,6 +3,8 @@ import streamlit as st
 import plotly.express as px
 
 # Configurando layout
+from scipy.stats import yulesimon_gen
+
 st.set_page_config(layout="wide")
 
 # Título principal
