@@ -9,7 +9,7 @@ def show_page1():
     #st.set_page_config(layout="wide")
 
     # Título principal
-    st.markdown("# Docentes Araguatins_2023🎈",
+    st.markdown("# Docentes Araguatins 2023🎈",
                 unsafe_allow_html=True)  # Usando unsafe_allow_html para permitir que o título tenha um tamanho maior
 
     # Carregando os dados
@@ -313,7 +313,7 @@ if selected_page == "Docentes":
     show_page1()
 elif selected_page == "Discentes":
     show_page2()
-elif selected_page == "Técnco Administrativos em Educação":
+elif selected_page == "Técnico Administrativo em Educação":
     show_page3()
 elif selected_page == "Sociedade Civil Organizada":
     show_page4()
