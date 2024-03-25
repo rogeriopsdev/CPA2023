@@ -9,7 +9,7 @@ def show_page1():
     #st.set_page_config(layout="wide")
 
     # Título principal
-    st.markdown("# Docentes Araguatins 🎈",
+    st.markdown("# Docentes Araguatins_2023🎈",
                 unsafe_allow_html=True)  # Usando unsafe_allow_html para permitir que o título tenha um tamanho maior
 
     # Carregando os dados
