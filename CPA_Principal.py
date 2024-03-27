@@ -15,7 +15,17 @@ def show_page1():
                 unsafe_allow_html=True)  # Usando unsafe_allow_html para permitir que o título tenha um tamanho maior
 
     # Carregando os dados
-    df = pd.read_csv('dados/docentes/araguatins.csv', sep=',')
+    #df = pd.read_csv('dados/docentes/araguatins.csv', sep=',')
+    df = pd.read_csv('dados/docentes/Docente_2023_Vcom.csv', sep=',')
+    local = df["Informe seu Setor de Lotação:"]
+    contagem_local = local.value_counts()
+
+    fig_local = px.bar(x=contagem_local.index, y=contagem_local.values, text=contagem_local.values,
+                        color_discrete_sequence=['green'])
+
+    fig_local.update_traces(texttemplate='%{text}', textposition='outside')
+
+    st.plotly_chart(fig_local)
 
     # Barra lateral com link para Docente.py
     st.sidebar.markdown("Clique [aqui](Docente.py) para abrir o arquivo Docente.py.")
@@ -91,6 +101,15 @@ def show_page2():
 
     # Carregando os dados
     df = pd.read_csv('dados/discente/discente_2023.csv', sep=',')
+    cursos = df["3. Em qual curso está matriculado ( Campus Araguatins )?"]
+    contagem_cursos = cursos.value_counts()
+
+    fig_cursos = px.bar(x=contagem_cursos.index, y=contagem_cursos.values, text=contagem_cursos.values,
+                        color_discrete_sequence=['green'])
+
+    fig_cursos.update_traces(texttemplate='%{text}', textposition='outside')
+
+    st.plotly_chart(fig_cursos)
 
     # Barra lateral com link para Docente.py
     st.sidebar.markdown("Clique [aqui](Docente.py) para abrir o arquivo Docente.py.")
@@ -135,6 +154,7 @@ def show_page2():
 
         # Calcular a média geral das colunas selecionadas
         media_geral = media_colunas.mean()
+
 
         # Plotar gráfico de barras com as médias das colunas selecionadas com cores personalizadas
         fig_media_colunas = px.bar(x=media_colunas.index, y=media_colunas.values,
