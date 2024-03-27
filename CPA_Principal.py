@@ -47,7 +47,7 @@ def show_page1():
             dados_filtrados = df[coluna]
 
             # Exibir DataFrame filtrado com tamanho maior
-            st.write(dados_filtrados, height=500)  # Ajustando a altura para aumentar o tamanho do DataFrame
+            st.write(dados_filtrados, height='500')  # Ajustando a altura para aumentar o tamanho do DataFrame
 
             # Plotar gráfico de dispersão para a coluna selecionada com tamanho maior e cores personalizadas
             fig_dispersao = px.scatter(df, x=coluna, trendline='ols', color_discrete_sequence=['blue'])
