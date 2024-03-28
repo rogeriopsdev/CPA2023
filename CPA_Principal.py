@@ -6,35 +6,45 @@ import plotly.express as px
 
 # Função para mostrar a Página 1
 def show_page1():
-    # st.markdown("# Página 1 🎈")
+
+
     # Configurando layout
-    # st.set_page_config(layout="wide")
+  #  st.set_page_config(layout="wide")
+
+
+    # Configurando layout
+  #  st.set_page_config(layout="wide")
 
     # Título principal
-    st.markdown("# Docentes Araguatins 2023🎈",
-                unsafe_allow_html=True)  # Usando unsafe_allow_html para permitir que o título tenha um tamanho maior
+    st.markdown("# Docentes Araguatins 2023🎈", unsafe_allow_html=True)
 
     # Carregando os dados
-    #df = pd.read_csv('dados/docentes/araguatins.csv', sep=',')
     df = pd.read_csv('dados/docentes/Docente_2023_Vcom.csv', sep=',')
-    local = df["Informe seu Setor de Lotação:"]
-    contagem_local = local.value_counts()
 
-    fig_local = px.bar(x=contagem_local.index, y=contagem_local.values, text=contagem_local.values,
-                        color_discrete_sequence=['green'])
+    # Sidebar para seleção de filtros
+    st.sidebar.markdown("## Filtros")
 
-    fig_local.update_traces(texttemplate='%{text}', textposition='outside')
+    # Filtro por "Informe seu Setor de Lotação"
+    filtro_setor = st.sidebar.checkbox("Filtrar por Setor de Lotação")
+    if filtro_setor:
+        setor_selecionado = st.sidebar.selectbox("Selecione o Setor de Lotação:",
+                                                 df["Informe seu Setor de Lotação:"].unique().tolist())
+        df_filtrado = df[df["Informe seu Setor de Lotação:"] == setor_selecionado]
+    else:
+        df_filtrado = df
 
-    st.plotly_chart(fig_local)
-
-    # Barra lateral com link para Docente.py
-    st.sidebar.markdown("Clique [aqui](Docente.py) para abrir o arquivo Docente.py.")
+    # Filtro por "Informe sua Unidade de Lotação"
+    filtro_unidade = st.sidebar.checkbox("Filtrar por Unidade de Lotação")
+    if filtro_unidade:
+        unidade_selecionada = st.sidebar.selectbox("Selecione a Unidade de Lotação:",
+                                                   df["Informe seu campus"].unique().tolist())
+        df_filtrado = df_filtrado[df_filtrado["Informe seu campus"] == unidade_selecionada]
 
     # Lista para armazenar as colunas selecionadas
     colunas_selecionadas = []
-
+    st.sidebar.markdown("## Respostas")
     # Botões para cada coluna no sidebar
-    for coluna in df.columns:
+    for coluna in df_filtrado.columns:
         # Adicionar checkbox e botão para cada coluna
         checkbox_coluna = st.sidebar.checkbox(coluna)
         if checkbox_coluna:
@@ -44,56 +54,68 @@ def show_page1():
     if colunas_selecionadas:
         for coluna in colunas_selecionadas:
             # Filtrar os dados pela coluna selecionada
-            dados_filtrados = df[coluna]
+            dados_filtrados = df_filtrado[coluna]
 
             # Exibir DataFrame filtrado com tamanho maior
-            st.write(dados_filtrados, height='500')  # Ajustando a altura para aumentar o tamanho do DataFrame
+            st.write(dados_filtrados, height=500)  # Ajustando a altura para aumentar o tamanho do DataFrame
 
-            # Plotar gráfico de dispersão para a coluna selecionada com tamanho maior e cores personalizadas
-            fig_dispersao = px.scatter(df, x=coluna, trendline='ols', color_discrete_sequence=['blue'])
-            fig_dispersao.update_xaxes(title=coluna)  # Adicionando legenda ao eixo x
-            fig_dispersao.update_yaxes(title="Quantidade de docentes")  # Adicionando legenda ao eixo y
-            st.plotly_chart(fig_dispersao,
-                            use_container_width=True)  # Usando use_container_width para estender o gráfico
+            try:
+                # Plotar gráfico de dispersão para a coluna selecionada com tamanho maior e cores personalizadas
+                fig_dispersao = px.scatter(df_filtrado, x=coluna, trendline='ols', color_discrete_sequence=['blue'])
+                fig_dispersao.update_xaxes(title=coluna)  # Adicionando legenda ao eixo x
+                fig_dispersao.update_yaxes(title="Quantidade de docentes")  # Adicionando legenda ao eixo y
+                st.plotly_chart(fig_dispersao,
+                                use_container_width=True)  # Usando use_container_width para estender o gráfico
 
-            # Calcular a média da coluna selecionada
-            media = dados_filtrados.mean()
+                # Calcular a média da coluna selecionada
+                media = dados_filtrados.mean()
 
-            # Plotar gráfico de médias para a coluna selecionada com tamanho maior e cores personalizadas
-            fig_media = px.bar(x=[coluna], y=[media], text=[f'{media:.2f}'], title=f'Média de {coluna}',
-                               color_discrete_sequence=['green'])
-            fig_media.update_traces(textposition='outside')
-            st.plotly_chart(fig_media, use_container_width=True)  # Usando use_container_width para estender o gráfico
+                # Plotar gráfico de médias para a coluna selecionada com tamanho maior e cores personalizadas
+                fig_media = px.bar(x=[coluna], y=[media], text=[f'{media:.2f}'], title=f'Média de {coluna}',
+                                   color_discrete_sequence=['green'])
+                fig_media.update_traces(textposition='outside')
+                st.plotly_chart(fig_media,
+                                use_container_width=True)  # Usando use_container_width para estender o gráfico
+            except Exception as e:
+                st.write(f"Erro ao gerar gráfico para a coluna {coluna}: {e}")
 
         # Calcular a média das colunas selecionadas
-        media_colunas = df[colunas_selecionadas].mean()
+        media_colunas = df_filtrado[colunas_selecionadas].mean()
 
         # Calcular a média geral das colunas selecionadas
         media_geral = media_colunas.mean()
 
-        # Plotar gráfico de barras com as médias das colunas selecionadas com cores personalizadas
-        fig_media_colunas = px.bar(x=media_colunas.index, y=media_colunas.values,
-                                   text=media_colunas.values, labels={'x': 'Coluna', 'y': 'Média'},
-                                   title='Média das Colunas Selecionadas', color_discrete_sequence=['red'])
-        fig_media_colunas.update_traces(textposition='outside')
-        st.plotly_chart(fig_media_colunas,
-                        use_container_width=True)  # Usando use_container_width para estender o gráfico
+        try:
+            # Plotar gráfico de barras com as médias das colunas selecionadas com cores personalizadas
+            fig_media_colunas = px.bar(x=media_colunas.index, y=media_colunas.values,
+                                       text=media_colunas.values, labels={'x': 'Coluna', 'y': 'Média'},
+                                       title='Média das Colunas Selecionadas', color_discrete_sequence=['red'])
+            fig_media_colunas.update_traces(textposition='outside')
+            st.plotly_chart(fig_media_colunas,
+                            use_container_width=True)  # Usando use_container_width para estender o gráfico
+        except Exception as e:
+            st.write(f"Erro ao gerar gráfico de média das colunas selecionadas: {e}")
 
-        # Plotar gráfico de barras com a média geral das colunas selecionadas
-        fig_media_geral = px.bar(x=['Média Geral'], y=[media_geral],
-                                 text=[f'{media_geral:.2f}'], title='Média Geral das Colunas Selecionadas',
-                                 color_discrete_sequence=['purple'])
-        fig_media_geral.update_traces(textposition='outside')
-        st.plotly_chart(fig_media_geral, use_container_width=True)  # Usando use_container_width para estender o gráfico
+        try:
+            # Plotar gráfico de barras com a média geral das colunas selecionadas
+            fig_media_geral = px.bar(x=['Média Geral'], y=[media_geral],
+                                     text=[f'{media_geral:.2f}'], title='Média Geral das Colunas Selecionadas',
+                                     color_discrete_sequence=['purple'])
+            fig_media_geral.update_traces(textposition='outside')
+            st.plotly_chart(fig_media_geral,
+                            use_container_width=True)  # Usando use_container_width para estender o gráfico
+        except Exception as e:
+            st.write(f"Erro ao gerar gráfico de média geral das colunas selecionadas: {e}")
     else:
         st.sidebar.write("Por favor, selecione uma ou mais colunas.")
 
 
 # Função para mostrar a Página 2
 def show_page2():
-    # st.markdown("# Página 2 ❄️")
+
+
     # Configurando layout
-    # st.set_page_config(layout="wide")
+    #st.set_page_config(layout="wide")
 
     # Título principal
     st.markdown("# Discentes Araguatins 🎈",
@@ -101,24 +123,19 @@ def show_page2():
 
     # Carregando os dados
     df = pd.read_csv('dados/discente/discente_2023.csv', sep=',')
-    cursos = df["3. Em qual curso está matriculado ( Campus Araguatins )?"]
-    contagem_cursos = cursos.value_counts()
-
-    fig_cursos = px.bar(x=contagem_cursos.index, y=contagem_cursos.values, text=contagem_cursos.values,
-                        color_discrete_sequence=['green'])
-
-    fig_cursos.update_traces(texttemplate='%{text}', textposition='outside')
-
-    st.plotly_chart(fig_cursos)
 
     # Barra lateral com link para Docente.py
-    st.sidebar.markdown("Clique [aqui](Docente.py) para abrir o arquivo Docente.py.")
 
     # Lista para armazenar as colunas selecionadas
     colunas_selecionadas = []
-
+    filtro_curso = st.sidebar.selectbox("Selecione o curso:", df[
+        "3. Em qual curso está matriculado ( Campus Araguatins )?"].unique().tolist())
+    st.sidebar.markdown("## Filtros")
+    # Aplicar filtro
+    df_filtrado = df[df["3. Em qual curso está matriculado ( Campus Araguatins )?"] == filtro_curso]
+    st.sidebar.markdown("## Respostas")
     # Botões para cada coluna no sidebar
-    for coluna in df.columns:
+    for coluna in df_filtrado.columns:
         # Adicionar checkbox e botão para cada coluna
         checkbox_coluna = st.sidebar.checkbox(coluna)
         if checkbox_coluna:
@@ -128,72 +145,98 @@ def show_page2():
     if colunas_selecionadas:
         for coluna in colunas_selecionadas:
             # Filtrar os dados pela coluna selecionada
-            dados_filtrados = df[coluna]
+            dados_filtrados = df_filtrado[coluna]
 
             # Exibir DataFrame filtrado com tamanho maior
             st.write(dados_filtrados, height=500)  # Ajustando a altura para aumentar o tamanho do DataFrame
 
-            # Plotar gráfico de dispersão para a coluna selecionada com tamanho maior e cores personalizadas
-            fig_dispersao = px.scatter(df, x=coluna, trendline='ols', color_discrete_sequence=['blue'])
-            fig_dispersao.update_xaxes(title=coluna)  # Adicionando legenda ao eixo x
-            fig_dispersao.update_yaxes(title="Quantidade de docentes")  # Adicionando legenda ao eixo y
-            st.plotly_chart(fig_dispersao,
-                            use_container_width=True)  # Usando use_container_width para estender o gráfico
+            try:
+                # Plotar gráfico de dispersão para a coluna selecionada com tamanho maior e cores personalizadas
+                fig_dispersao = px.scatter(df_filtrado, x=coluna, trendline='ols', color_discrete_sequence=['blue'])
+                fig_dispersao.update_xaxes(title=coluna)  # Adicionando legenda ao eixo x
+                fig_dispersao.update_yaxes(title="Quantidade de docentes")  # Adicionando legenda ao eixo y
+                st.plotly_chart(fig_dispersao,
+                                use_container_width=True)  # Usando use_container_width para estender o gráfico
 
-            # Calcular a média da coluna selecionada
-            media = dados_filtrados.mean()
+                # Calcular a média da coluna selecionada
+                media = dados_filtrados.mean()
 
-            # Plotar gráfico de médias para a coluna selecionada com tamanho maior e cores personalizadas
-            fig_media = px.bar(x=[coluna], y=[media], text=[f'{media:.2f}'], title=f'Média de {coluna}',
-                               color_discrete_sequence=['green'])
-            fig_media.update_traces(textposition='outside')
-            st.plotly_chart(fig_media, use_container_width=True)  # Usando use_container_width para estender o gráfico
+                # Plotar gráfico de médias para a coluna selecionada com tamanho maior e cores personalizadas
+                fig_media = px.bar(x=[coluna], y=[media], text=[f'{media:.2f}'], title=f'Média de {coluna}',
+                                   color_discrete_sequence=['green'])
+                fig_media.update_traces(textposition='outside')
+                st.plotly_chart(fig_media,
+                                use_container_width=True)  # Usando use_container_width para estender o gráfico
+            except Exception as e:
+                st.write(f"Erro ao gerar gráfico para a coluna {coluna}: {e}")
 
         # Calcular a média das colunas selecionadas
-        media_colunas = df[colunas_selecionadas].mean()
+        media_colunas = df_filtrado[colunas_selecionadas].mean(axis=0)
 
         # Calcular a média geral das colunas selecionadas
         media_geral = media_colunas.mean()
 
+        try:
+            # Plotar gráfico de barras com as médias das colunas selecionadas com cores personalizadas
+            fig_media_colunas = px.bar(x=media_colunas.index, y=media_colunas.values,
+                                       text=media_colunas.values, labels={'x': 'Coluna', 'y': 'Média'},
+                                       title='Média das Colunas Selecionadas', color_discrete_sequence=['red'])
+            fig_media_colunas.update_traces(textposition='outside')
+            st.plotly_chart(fig_media_colunas,
+                            use_container_width=True)  # Usando use_container_width para estender o gráfico
+        except Exception as e:
+            st.write(f"Erro ao gerar gráfico de média das colunas selecionadas: {e}")
 
-        # Plotar gráfico de barras com as médias das colunas selecionadas com cores personalizadas
-        fig_media_colunas = px.bar(x=media_colunas.index, y=media_colunas.values,
-                                   text=media_colunas.values, labels={'x': 'Coluna', 'y': 'Média'},
-                                   title='Média das Colunas Selecionadas', color_discrete_sequence=['red'])
-        fig_media_colunas.update_traces(textposition='outside')
-        st.plotly_chart(fig_media_colunas,
-                        use_container_width=True)  # Usando use_container_width para estender o gráfico
-
-        # Plotar gráfico de barras com a média geral das colunas selecionadas
-        fig_media_geral = px.bar(x=['Média Geral'], y=[media_geral],
-                                 text=[f'{media_geral:.2f}'], title='Média Geral das Colunas Selecionadas',
-                                 color_discrete_sequence=['purple'])
-        fig_media_geral.update_traces(textposition='outside')
-        st.plotly_chart(fig_media_geral, use_container_width=True)  # Usando use_container_width para estender o gráfico
+        try:
+            # Plotar gráfico de barras com a média geral das colunas selecionadas
+            fig_media_geral = px.bar(x=['Média Geral'], y=[media_geral],
+                                     text=[f'{media_geral:.2f}'], title='Média Geral das Colunas Selecionadas',
+                                     color_discrete_sequence=['purple'])
+            fig_media_geral.update_traces(textposition='outside')
+            st.plotly_chart(fig_media_geral,
+                            use_container_width=True)  # Usando use_container_width para estender o gráfico
+        except Exception as e:
+            st.write(f"Erro ao gerar gráfico de média geral das colunas selecionadas: {e}")
     else:
         st.sidebar.write("Por favor, selecione uma ou mais colunas.")
 
 
 # Função para mostrar a Página 3
 def show_page3():
+
+
     # Configurando layout
     #st.set_page_config(layout="wide")
 
     # Título principal
-    st.markdown("# Técnicos Administrativos em Educação - Araguatins 🎈",
-                unsafe_allow_html=True)  # Usando unsafe_allow_html para permitir que o título tenha um tamanho maior
+    st.markdown("# Discentes Araguatins 🎈", unsafe_allow_html=True)
 
     # Carregando os dados
     df = pd.read_csv('dados/tae/tae_araguatins.csv', sep=',')
 
     # Barra lateral com link para Docente.py
-    st.sidebar.markdown("Clique [aqui](Docente.py) para abrir o arquivo Docente.py.")
 
     # Lista para armazenar as colunas selecionadas
     colunas_selecionadas = []
 
+    # Filtro por "Informe seu setor de lotação"
+    filtro_setor = st.sidebar.checkbox("Filtrar por Setor de Lotação")
+    if filtro_setor:
+        setor_selecionado = st.sidebar.selectbox("Selecione o Setor de Lotação:",
+                                                 df["2. Informe seu setor de lotação?"].unique().tolist())
+        df_filtrado = df[df["2. Informe seu setor de lotação?"] == setor_selecionado]
+    else:
+        df_filtrado = df
+
+    # Filtro por "Informe sua Unidade de Lotação"
+    filtro_unidade = st.sidebar.checkbox("Filtrar por Unidade de Lotação")
+    if filtro_unidade:
+        unidade_selecionada = st.sidebar.selectbox("Selecione a Unidade de Lotação:",
+                                                   df["1. Informe sua Unidade de Lotação:"].unique().tolist())
+        df_filtrado = df_filtrado[df_filtrado["1. Informe sua Unidade de Lotação:"] == unidade_selecionada]
+
     # Botões para cada coluna no sidebar
-    for coluna in df.columns:
+    for coluna in df_filtrado.columns:
         # Adicionar checkbox e botão para cada coluna
         checkbox_coluna = st.sidebar.checkbox(coluna)
         if checkbox_coluna:
@@ -203,47 +246,58 @@ def show_page3():
     if colunas_selecionadas:
         for coluna in colunas_selecionadas:
             # Filtrar os dados pela coluna selecionada
-            dados_filtrados = df[coluna]
+            dados_filtrados = df_filtrado[coluna]
 
             # Exibir DataFrame filtrado com tamanho maior
             st.write(dados_filtrados, height=500)  # Ajustando a altura para aumentar o tamanho do DataFrame
 
-            # Plotar gráfico de dispersão para a coluna selecionada com tamanho maior e cores personalizadas
-            fig_dispersao = px.scatter(df, x=coluna, trendline='ols', color_discrete_sequence=['blue'])
-            fig_dispersao.update_xaxes(title=coluna)  # Adicionando legenda ao eixo x
-            fig_dispersao.update_yaxes(title="Quantidade de docentes")  # Adicionando legenda ao eixo y
-            st.plotly_chart(fig_dispersao,
-                            use_container_width=True)  # Usando use_container_width para estender o gráfico
+            try:
+                # Plotar gráfico de dispersão para a coluna selecionada com tamanho maior e cores personalizadas
+                fig_dispersao = px.scatter(df_filtrado, x=coluna, trendline='ols', color_discrete_sequence=['blue'])
+                fig_dispersao.update_xaxes(title=coluna)  # Adicionando legenda ao eixo x
+                fig_dispersao.update_yaxes(title="Quantidade de docentes")  # Adicionando legenda ao eixo y
+                st.plotly_chart(fig_dispersao,
+                                use_container_width=True)  # Usando use_container_width para estender o gráfico
 
-            # Calcular a média da coluna selecionada
-            media = dados_filtrados.mean()
+                # Calcular a média da coluna selecionada
+                media = dados_filtrados.mean()
 
-            # Plotar gráfico de médias para a coluna selecionada com tamanho maior e cores personalizadas
-            fig_media = px.bar(x=[coluna], y=[media], text=[f'{media:.2f}'], title=f'Média de {coluna}',
-                               color_discrete_sequence=['green'])
-            fig_media.update_traces(textposition='outside')
-            st.plotly_chart(fig_media, use_container_width=True)  # Usando use_container_width para estender o gráfico
+                # Plotar gráfico de médias para a coluna selecionada com tamanho maior e cores personalizadas
+                fig_media = px.bar(x=[coluna], y=[media], text=[f'{media:.2f}'], title=f'Média de {coluna}',
+                                   color_discrete_sequence=['green'])
+                fig_media.update_traces(textposition='outside')
+                st.plotly_chart(fig_media,
+                                use_container_width=True)  # Usando use_container_width para estender o gráfico
+            except Exception as e:
+                st.write(f"Erro ao gerar gráfico para a coluna {coluna}: {e}")
 
         # Calcular a média das colunas selecionadas
-        media_colunas = df[colunas_selecionadas].mean()
+        media_colunas = df_filtrado[colunas_selecionadas].mean(axis=0)
 
         # Calcular a média geral das colunas selecionadas
         media_geral = media_colunas.mean()
 
-        # Plotar gráfico de barras com as médias das colunas selecionadas com cores personalizadas
-        fig_media_colunas = px.bar(x=media_colunas.index, y=media_colunas.values,
-                                   text=media_colunas.values, labels={'x': 'Coluna', 'y': 'Média'},
-                                   title='Média das Colunas Selecionadas', color_discrete_sequence=['red'])
-        fig_media_colunas.update_traces(textposition='outside')
-        st.plotly_chart(fig_media_colunas,
-                        use_container_width=True)  # Usando use_container_width para estender o gráfico
+        try:
+            # Plotar gráfico de barras com as médias das colunas selecionadas com cores personalizadas
+            fig_media_colunas = px.bar(x=media_colunas.index, y=media_colunas.values,
+                                       text=media_colunas.values, labels={'x': 'Coluna', 'y': 'Média'},
+                                       title='Média das Colunas Selecionadas', color_discrete_sequence=['red'])
+            fig_media_colunas.update_traces(textposition='outside')
+            st.plotly_chart(fig_media_colunas,
+                            use_container_width=True)  # Usando use_container_width para estender o gráfico
+        except Exception as e:
+            st.write(f"Erro ao gerar gráfico de média das colunas selecionadas: {e}")
 
-        # Plotar gráfico de barras com a média geral das colunas selecionadas
-        fig_media_geral = px.bar(x=['Média Geral'], y=[media_geral],
-                                 text=[f'{media_geral:.2f}'], title='Média Geral das Colunas Selecionadas',
-                                 color_discrete_sequence=['purple'])
-        fig_media_geral.update_traces(textposition='outside')
-        st.plotly_chart(fig_media_geral, use_container_width=True)  # Usando use_container_width para estender o gráfico
+        try:
+            # Plotar gráfico de barras com a média geral das colunas selecionadas
+            fig_media_geral = px.bar(x=['Média Geral'], y=[media_geral],
+                                     text=[f'{media_geral:.2f}'], title='Média Geral das Colunas Selecionadas',
+                                     color_discrete_sequence=['purple'])
+            fig_media_geral.update_traces(textposition='outside')
+            st.plotly_chart(fig_media_geral,
+                            use_container_width=True)  # Usando use_container_width para estender o gráfico
+        except Exception as e:
+            st.write(f"Erro ao gerar gráfico de média geral das colunas selecionadas: {e}")
     else:
         st.sidebar.write("Por favor, selecione uma ou mais colunas.")
 
