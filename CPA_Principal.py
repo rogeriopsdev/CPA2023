@@ -22,7 +22,7 @@ def show_page1():
     df = pd.read_csv('dados/docentes/Docente_2023_Vcom.csv', sep=',')
 
     # Sidebar para seleção de filtros
-    st.sidebar.markdown("## Filtros")
+    st.sidebar.markdown("##Filtros")
 
     # Filtro por "Informe seu Setor de Lotação"
     filtro_setor = st.sidebar.checkbox("Filtrar por Setor de Lotação")
