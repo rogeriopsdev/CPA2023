@@ -209,7 +209,7 @@ def show_page3():
     #st.set_page_config(layout="wide")
 
     # Título principal
-    st.markdown("# Técnicos Administrativos em Educação Araguatins 🎈", unsafe_allow_html=True)
+    st.markdown("# Técnicos Administrativos em Educação Araguatins🎈", unsafe_allow_html=True)
 
     # Carregando os dados
     df = pd.read_csv('dados/tae/tae_araguatins.csv', sep=',')
