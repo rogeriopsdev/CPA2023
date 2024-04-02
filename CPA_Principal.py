@@ -19,7 +19,7 @@ def show_page1():
     st.markdown("# Docentes Araguatins 2023 🎈", unsafe_allow_html=True)
 
     # Carregando os dados
-    df = pd.read_csv('dados/docentes/Docente_2023_Vcom.csv', sep=',')
+    df = pd.read_csv('dados/docentes/Docente_2023_VcomP.csv', sep=',')
 
     # Sidebar para seleção de filtros
     st.sidebar.markdown("## Filtros")
