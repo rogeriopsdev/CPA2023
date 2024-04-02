@@ -16,7 +16,7 @@ def show_page1():
   #  st.set_page_config(layout="wide")
 
     # Título principal
-    st.markdown("# Docentes Araguatins 2023 🎈", unsafe_allow_html=True)
+    st.markdown("# Docentes Araguatins 2023 🎈🎈", unsafe_allow_html=True)
 
     # Carregando os dados
     df = pd.read_csv('dados/docentes/Docente_2023_Vcomp.csv', sep=',')
